@@ -39,11 +39,9 @@ Use getFinals to do the following:
 
 hint - you should be looking at the stage key inside of the objects
 */
-// data as a param - when you invoke the function you'll be passing fifaData as an argument
 
-function getFinals(data) {
-   // use filter to filter the data for final state
-   const allFinals = data.filter(function(item){
+function getFinals(fifaDatacb) {
+   const allFinals = fifaDatacb.filter(function(item){
        return item.Stage === "Final";
    })
    return allFinals;
@@ -58,13 +56,16 @@ Use the higher-order function called getYears to do the following:
 1. Receive an array
 2. Receive a callback function getFinals from task 2 
 3. Return an array called years containing all of the years in the getFinals data set*/
+
 //params are data which will be fifaData when you invoke it, getFinalscb to pass getFinals when you invoke
 
-function getYears(/* code here */) {
-    //map over the getFinalscb and return the years (item.Year)
-    /* code here */
+function getYears(fifaDatacb, getFinalscb){
+    const finalsYears = getFinalscb(fifaDatacb).map(function(item){
+        return item.Year;
+    })
+    return finalsYears;
 }
-
+console.log("task 3", getYears(fifaData, getFinals));
 
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 4: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀
@@ -75,14 +76,17 @@ Use the higher-order function getWinners to do the following:
 4. Returns the names of all winning countries in an array called `winners` */ 
 // data which will be fifaData when the function is invoked, getFinalscb to pass getFinals function when invoked
 
-function getWinners(/* code here */) {
-    /* code here */
-
-    // map over getFinals and return the winners using a conditional 
-    // don't worry about ties and overtime
-    // just return the winner based on points scored in the game
+function getWinners(fifaDatacb, getFinalscb) {
+    const winners = getFinalscb(fifaDatacb).map(function(item){
+        if(item["Home Team Goals"] > item["Away Team Goals"]){
+            return item["Home Team Name"];
+        }else if(item["Away Team Goals"] > item["Home Team Goals"]){
+            return (item["Away Team Name"]);
+        }
+    })
+    return winners;
 }
-
+console.log("task 4", getWinners(fifaData, getFinals));
 
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 5: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 
@@ -94,13 +98,20 @@ Use the higher-order function getWinnersByYear to do the following:
 
 hint: the strings returned need to exactly match the string in step 4.
  */
-//3 params data,getYearscb, getWinnerscb
-function getWinnersByYear(/* code here */) {
-    // store the results in a variable
+//3 params fifaDatacb,getYearscb, getWinnerscb
+// store the results in a variable
     // use map with item and index
-    // map over winnersuse index to refer to the year and use item to refer to the current value in winners
-}
+    // map over winners use index to refer to the year and use item to refer to the current value in winners
 
+function getWinnersByYear(fifaDatacb, getYearscb, getWinnerscb) {
+   const yearOfWinners = getYearscb(fifaDatacb, getFinals)
+   const nameOfWinner = getWinnerscb(fifaDatacb, getFinals)
+   const newArray = yearOfWinners.map(function(item, index){
+    return `In ${yearOfWinners[index]}, ${nameOfWinner[index]} won the world cup!`;
+   })
+   return newArray;
+}
+console.log(getWinnersByYear(fifaData, getYears, getWinners))
 
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 6: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀
@@ -112,13 +123,17 @@ Use the higher order function getAverageGoals to do the following:
  
  Example of invocation: getAverageGoals(getFinals(fifaData));
 */
-// getFinalscb
-function getAverageGoals(/* code here */) {
-   /* code here */
-   // use .reduce - add up all the home team and away team goals and then divide by length of     data set
+// use .reduce - add up all the home team and away team goals and then divide by length of     data set
    // hint if you want the 2nd decimal, look up .toFixed(2);
+
+function getAverageGoals(getFinalscb){
+   const totalGoals = getFinalscb.reduce(function(acc,item){
+       return acc + item["Home Team Goals"] + item["Away Team Goals"];
+   },0);
+   return (totalGoals / getFinalscb.length).toFixed(2);
 }
 
+console.log(getAverageGoals(getFinals(fifaData)));
 
 
 
